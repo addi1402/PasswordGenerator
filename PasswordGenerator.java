@@ -1,97 +1,91 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class PasswordGenerator extends JFrame {
 
-    private JCheckBox checkbox1, checkbox2, checkbox3, checkbox4, checkbox5, checkbox6, checkbox7, checkbox8, checkbox9,
-            checkbox10;
+    private JLabel title = new JLabel("Password Generator");
     private JButton generateButton;
     private JLabel passwordLabel;
-    private JLabel title = new JLabel("Password Generator");
-    private Color blue, bg, coal;
+    private Color blue = new Color(48, 129, 237);
+    private Color backgroundColor = new Color(22, 27, 34);
+    private Color coal = new Color(33, 38, 45);
+    private JPanel mainPane, checkBoxPane, buttonPane, passwordPane;
+    JCheckBox[] checkboxes = new JCheckBox[10];
 
-    private void setColor(JCheckBox box, Color color, Font font){
-        // box.setBackground(Color.WHITE);
-        box.setOpaque(false);
-        box.setFocusPainted(false);
-        box.setForeground(Color.GRAY);
-        box.setMargin(new Insets(10, 0, 10, 20));
-        box.setFont(font);
+    // Checkbox Configuration Method
+    private void checkBoxConfig(Font font) {
+        for (int i = 0; i <= checkboxes.length - 1; i++) {
+            checkboxes[i].setOpaque(false);
+            checkboxes[i].setFocusPainted(false);
+            checkboxes[i].setForeground(new Color(137, 145, 155));
+            checkboxes[i].setFont(font);
+            checkboxes[i].setIconTextGap(15);
+            checkBoxPane.add(checkboxes[i]);
+        }
     }
 
-
-
+    // Constructor Function
     public PasswordGenerator() {
+
         super("Password Generator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        Font medium = null;
+
+        // Set Up Main Pane
+        mainPane = new JPanel();
+        mainPane.setBackground(backgroundColor);
+        // mainPane.setBorder(new EmptyBorder(45, 45, 45, 45));
+
+        // Set Custom Fonts
+        Font light = null;
         Font regular = null;
+
         try {
-            medium = Font.createFont(Font.TRUETYPE_FONT,
-                    new File("SFPRODISPLAYMEDIUM.OTF"));
+            light = Font.createFont(Font.TRUETYPE_FONT, new File("Segoe UI Light.ttf"));
+            regular = Font.createFont(Font.TRUETYPE_FONT, new File("Segoe UI.ttf"));
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
         }
-        try {
-            regular = Font.createFont(Font.TRUETYPE_FONT,
-                    new File("SFPRODISPLAYREGULAR.OTF"));
-        } catch (IOException | FontFormatException e) {
-            e.printStackTrace();
-        }        
 
-        // Create a new Font object with the desired font name, style, and size
-        Font cFont = medium.deriveFont(Font.PLAIN, 23);
-        Font bFont = regular.deriveFont(Font.BOLD, 14);
-        Font dFont = medium.deriveFont(Font.BOLD, 18);
+        // Create a new Font Object
+        Font lightFont = light.deriveFont(Font.PLAIN, 28);
+        Font regularFont = regular.deriveFont(Font.PLAIN, 14);
+        Font passFont = light.deriveFont(Font.PLAIN, 16);
 
-        blue = new Color(48, 129, 237);
-        bg = new Color(29, 29, 29);
-        coal = new Color(2, 2, 2);
-        title.setFont(cFont);
+        // Title Configuration
+        title.setFont(lightFont);
+        title.setForeground(Color.WHITE);
 
+        // Checkbox Configuration
+        checkBoxPane = new JPanel(new GridLayout(10, 1));
+        checkBoxPane.setOpaque(false);
 
-        JPanel panel = new JPanel(new GridLayout(14, 1));
-        panel.setBackground(bg);        
+        checkboxes[0] = new JCheckBox("Uppercase Letters");
+        checkboxes[1] = new JCheckBox("Lowercase Letters");
+        checkboxes[2] = new JCheckBox("Numbers");
+        checkboxes[3] = new JCheckBox("Special Characters");
+        checkboxes[4] = new JCheckBox("At least One Uppercase Letter");
+        checkboxes[5] = new JCheckBox("At least One Lowercase Letter");
+        checkboxes[6] = new JCheckBox("At least One Number");
+        checkboxes[7] = new JCheckBox("At least One Special Character");
+        checkboxes[8] = new JCheckBox("Exclude Similar Characters");
+        checkboxes[9] = new JCheckBox("Exclude Ambiguous Characters");
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(bg);
-        JPanel passwordPanel = new JPanel();
-        passwordPanel.setBackground(Color.DARK_GRAY);
+        checkBoxConfig(regularFont);
 
-
-        checkbox1 = new JCheckBox("Use Uppercase Letters");
-        checkbox2 = new JCheckBox("Use Lowercase Letters");
-        checkbox3 = new JCheckBox("Use Numbers");
-        checkbox4 = new JCheckBox("Use Special Characters");
-        checkbox5 = new JCheckBox("Require at least one Uppercase Letter");
-        checkbox6 = new JCheckBox("Require at least one Lowercase Letter");
-        checkbox7 = new JCheckBox("Require at least one Number");
-        checkbox8 = new JCheckBox("Require at least one Special Character");
-        checkbox9 = new JCheckBox("Exclude Similar Characters (i, l, 1, L, o, 0, O)");
-        checkbox10 = new JCheckBox(
-                "Exclude Ambiguous Characters ({}, [], (), /, \\, ', \", `, ~, ^, _, -, ., :, ;, <, >, ,)");
-
-        setColor(checkbox1, bg, bFont);
-        setColor(checkbox2, bg, bFont);
-        setColor(checkbox3, bg,bFont);
-        setColor(checkbox4, bg,bFont);
-        setColor(checkbox5, bg,bFont);
-        setColor(checkbox6, bg,bFont);
-        setColor(checkbox7, bg,bFont);
-        setColor(checkbox8, bg,bFont);
-        setColor(checkbox9, bg,bFont);
-        setColor(checkbox10, bg,bFont);
-
+        // Button Configuration
+        buttonPane = new JPanel(new FlowLayout());
+        buttonPane.setOpaque(false);
         generateButton = new JButton("Generate");
         generateButton.setBackground(blue);
         generateButton.setForeground(Color.WHITE);
-        generateButton.setFont(bFont);
-        generateButton.setPreferredSize(new Dimension(120,30));
+        generateButton.setFont(regularFont);
+        generateButton.setPreferredSize(new Dimension(120, 30));
         generateButton.setFocusPainted(false);
+        generateButton.setRolloverEnabled(false);
+        buttonPane.add(generateButton);
 
         generateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -100,35 +94,48 @@ public class PasswordGenerator extends JFrame {
             }
         });
 
+        // Password Label Configuration
+        passwordPane = new JPanel(new GridBagLayout());
+        passwordPane.setPreferredSize(new Dimension(100, 40));
+        GridBagConstraints gb = new GridBagConstraints();
+        gb.gridx = 0;
+        gb.gridy = 0;
+        gb.fill = GridBagConstraints.BOTH;
         passwordLabel = new JLabel();
-        passwordLabel.setHorizontalAlignment(JLabel.CENTER);
-        passwordLabel.setFont(dFont);
+        passwordLabel.setFont(passFont);
         passwordLabel.setForeground(Color.WHITE);
-        title.setHorizontalAlignment(JLabel.LEFT);
-        title.setForeground(Color.WHITE);
+        passwordPane.add(passwordLabel, gb);
+        passwordPane.setBackground(coal);
 
+        // Add all components to Main Panel
+        setContentPane(mainPane);
 
-        panel.add(title);
-        panel.add(checkbox1);
-        panel.add(checkbox2);
-        panel.add(checkbox3);
-        panel.add(checkbox4);
-        panel.add(checkbox5);
-        panel.add(checkbox6);
-        panel.add(checkbox7);
-        panel.add(checkbox8);
-        panel.add(checkbox9);
-        panel.add(checkbox10);
-        buttonPanel.add(generateButton);
-        passwordPanel.add(passwordLabel);
-        panel.setBorder(BorderFactory.createLineBorder(bg, 50)); // add 10 pixels of padding to all sides
+        mainPane.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(45, 45, 0, 200);
+        mainPane.add(title, gbc);
 
+        gbc.gridy = 1;
+        gbc.weighty = 1.0;
+        gbc.insets = new Insets(25, 45, 0, 45);
+        gbc.fill = GridBagConstraints.BOTH;
+        mainPane.add(checkBoxPane, gbc);
 
-        setContentPane(panel);
-        add(buttonPanel);
-        add(passwordPanel);
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(25, 45, 0, 45);
+        mainPane.add(buttonPane, gbc);
 
-        setBackground(bg);
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(20, 45, 40, 45);
+
+        mainPane.add(passwordPane, gbc);
+
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -138,40 +145,43 @@ public class PasswordGenerator extends JFrame {
         String uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
         String numbers = "0123456789";
-        String specialCharacters = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+        // String specialCharacters = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+        String specialCharacters = "!#$%&*=?@";
+
+        String ambiguousCharacters = "{}[]()/\\\\'\"`~,^_\\-.:;<>,]";
+
         String similarCharacters = "il1Lo0O";
-        String ambiguousCharacters = "{}[]()/\\'\"`~,^_-.:;<>,";
 
         StringBuilder passwordBuilder = new StringBuilder();
 
         // Add uppercase letters
-        if (checkbox1.isSelected()) {
+        if (checkboxes[0].isSelected()) {
             passwordBuilder.append(uppercaseLetters);
         }
 
         // Add lowercase letters
-        if (checkbox2.isSelected()) {
+        if (checkboxes[1].isSelected()) {
             passwordBuilder.append(lowercaseLetters);
         }
 
         // Add numbers
-        if (checkbox3.isSelected()) {
+        if (checkboxes[2].isSelected()) {
             passwordBuilder.append(numbers);
         }
 
         // Add special characters
-        if (checkbox4.isSelected()) {
+        if (checkboxes[3].isSelected()) {
             passwordBuilder.append(specialCharacters);
         }
 
         // Exclude similar characters
-        if (checkbox9.isSelected()) {
+        if (checkboxes[4].isSelected()) {
             passwordBuilder = new StringBuilder(
                     passwordBuilder.toString().replaceAll("[" + similarCharacters + "]", ""));
         }
 
         // Exclude ambiguous characters
-        if (checkbox10.isSelected()) {
+        if (checkboxes[5].isSelected()) {
             passwordBuilder = new StringBuilder(
                     passwordBuilder.toString().replaceAll("[" + ambiguousCharacters + "]", ""));
 
@@ -180,7 +190,7 @@ public class PasswordGenerator extends JFrame {
         String passwordCharacterSet = passwordBuilder.toString();
 
         // Check if at least one uppercase letter is required
-        if (checkbox5.isSelected()) {
+        if (checkboxes[6].isSelected()) {
             boolean containsUppercaseLetter = false;
             for (int i = 0; i < uppercaseLetters.length(); i++) {
                 if (passwordCharacterSet.indexOf(uppercaseLetters.charAt(i)) >= 0) {
@@ -194,7 +204,7 @@ public class PasswordGenerator extends JFrame {
         }
 
         // Check if at least one lowercase letter is required
-        if (checkbox6.isSelected()) {
+        if (checkboxes[7].isSelected()) {
             boolean containsLowercaseLetter = false;
             for (int i = 0; i < lowercaseLetters.length(); i++) {
                 if (passwordCharacterSet.indexOf(lowercaseLetters.charAt(i)) >= 0) {
@@ -208,7 +218,7 @@ public class PasswordGenerator extends JFrame {
         }
 
         // Check if at least one number is required
-        if (checkbox7.isSelected()) {
+        if (checkboxes[8].isSelected()) {
             boolean containsNumber = false;
             for (int i = 0; i < numbers.length(); i++) {
                 if (passwordCharacterSet.indexOf(numbers.charAt(i)) >= 0) {
@@ -222,7 +232,7 @@ public class PasswordGenerator extends JFrame {
         }
 
         // Check if at least one special character is required
-        if (checkbox8.isSelected()) {
+        if (checkboxes[9].isSelected()) {
             boolean containsSpecialCharacter = false;
             for (int i = 0; i < specialCharacters.length(); i++) {
                 if (passwordCharacterSet.indexOf(specialCharacters.charAt(i)) >= 0) {
@@ -238,7 +248,7 @@ public class PasswordGenerator extends JFrame {
         StringBuilder password = new StringBuilder();
         int passwordLength = 8; // default password length
         try {
-            passwordLength = Integer.parseInt(JOptionPane.showInputDialog("Enter password length (8-64):"));
+            passwordLength = Integer.parseInt(JOptionPane.showInputDialog("Enter Password length (8 to 64):"));
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(null, "Invalid password length. Default length of 8 will be used.");
         }
