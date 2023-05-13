@@ -2,7 +2,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-
 import javax.swing.*;
 
 public class PasswordGenerator extends JFrame {
@@ -15,8 +14,11 @@ public class PasswordGenerator extends JFrame {
     private Color blue, bg, coal;
 
     private void setColor(JCheckBox box, Color color, Font font){
-        box.setBackground(Color.WHITE);
-        box.setMargin(new Insets(10, 10, 10, 10));
+        // box.setBackground(Color.WHITE);
+        box.setOpaque(false);
+        box.setFocusPainted(false);
+        box.setForeground(Color.GRAY);
+        box.setMargin(new Insets(10, 0, 10, 20));
         box.setFont(font);
     }
 
@@ -39,22 +41,27 @@ public class PasswordGenerator extends JFrame {
                     new File("SFPRODISPLAYREGULAR.OTF"));
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
-        }
+        }        
 
         // Create a new Font object with the desired font name, style, and size
-        Font cFont = medium.deriveFont(Font.BOLD, 18);
+        Font cFont = medium.deriveFont(Font.PLAIN, 23);
         Font bFont = regular.deriveFont(Font.BOLD, 14);
+        Font dFont = medium.deriveFont(Font.BOLD, 18);
 
         blue = new Color(48, 129, 237);
-        bg = new Color(240, 244, 247);
+        bg = new Color(29, 29, 29);
         coal = new Color(2, 2, 2);
         title.setFont(cFont);
 
 
+        JPanel panel = new JPanel(new GridLayout(14, 1));
+        panel.setBackground(bg);        
 
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(bg);
+        JPanel passwordPanel = new JPanel();
+        passwordPanel.setBackground(Color.DARK_GRAY);
 
-        JPanel panel = new JPanel(new GridLayout(13, 1));
-        panel.setBackground(bg);
 
         checkbox1 = new JCheckBox("Use Uppercase Letters");
         checkbox2 = new JCheckBox("Use Lowercase Letters");
@@ -79,12 +86,12 @@ public class PasswordGenerator extends JFrame {
         setColor(checkbox9, bg,bFont);
         setColor(checkbox10, bg,bFont);
 
-        generateButton = new JButton("Generate Password");
+        generateButton = new JButton("Generate");
         generateButton.setBackground(blue);
         generateButton.setForeground(Color.WHITE);
         generateButton.setFont(bFont);
-        generateButton.setPreferredSize(new Dimension(150, 50));
-
+        generateButton.setPreferredSize(new Dimension(120,30));
+        generateButton.setFocusPainted(false);
 
         generateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -95,8 +102,10 @@ public class PasswordGenerator extends JFrame {
 
         passwordLabel = new JLabel();
         passwordLabel.setHorizontalAlignment(JLabel.CENTER);
-        passwordLabel.setFont(cFont);
-        title.setHorizontalAlignment(JLabel.CENTER);
+        passwordLabel.setFont(dFont);
+        passwordLabel.setForeground(Color.WHITE);
+        title.setHorizontalAlignment(JLabel.LEFT);
+        title.setForeground(Color.WHITE);
 
 
         panel.add(title);
@@ -110,12 +119,15 @@ public class PasswordGenerator extends JFrame {
         panel.add(checkbox8);
         panel.add(checkbox9);
         panel.add(checkbox10);
-        panel.add(generateButton);
-        panel.add(passwordLabel);
+        buttonPanel.add(generateButton);
+        passwordPanel.add(passwordLabel);
         panel.setBorder(BorderFactory.createLineBorder(bg, 50)); // add 10 pixels of padding to all sides
 
 
         setContentPane(panel);
+        add(buttonPanel);
+        add(passwordPanel);
+
         setBackground(bg);
         pack();
         setLocationRelativeTo(null);
