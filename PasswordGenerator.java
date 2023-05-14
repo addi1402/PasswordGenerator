@@ -2,7 +2,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 
 public class PasswordGenerator extends JFrame {
 
@@ -11,9 +10,10 @@ public class PasswordGenerator extends JFrame {
     private JLabel passwordLabel;
     private Color blue = new Color(48, 129, 237);
     private Color backgroundColor = new Color(22, 27, 34);
-    private Color coal = new Color(33, 38, 45);
-    private JPanel mainPane, checkBoxPane, buttonPane, passwordPane;
+    private Color coal = new Color(27, 34, 43);
+    private JPanel mainPane, checkBoxPane, buttonPane, passwordPane, tfPane;
     JCheckBox[] checkboxes = new JCheckBox[10];
+    private JTextField tf = new JTextField(2);
 
     // Checkbox Configuration Method
     private void checkBoxConfig(Font font) {
@@ -36,7 +36,6 @@ public class PasswordGenerator extends JFrame {
         // Set Up Main Pane
         mainPane = new JPanel();
         mainPane.setBackground(backgroundColor);
-        // mainPane.setBorder(new EmptyBorder(45, 45, 45, 45));
 
         // Set Custom Fonts
         Font light = null;
@@ -53,6 +52,7 @@ public class PasswordGenerator extends JFrame {
         Font lightFont = light.deriveFont(Font.PLAIN, 28);
         Font regularFont = regular.deriveFont(Font.PLAIN, 14);
         Font passFont = light.deriveFont(Font.PLAIN, 16);
+        Font passLenFont = light.deriveFont(Font.PLAIN, 16);
 
         // Title Configuration
         title.setFont(lightFont);
@@ -75,6 +75,36 @@ public class PasswordGenerator extends JFrame {
 
         checkBoxConfig(regularFont);
 
+        // Password Length Configuration(8-20)
+        tfPane = new JPanel(new GridBagLayout());
+        GridBagConstraints g = new GridBagConstraints();
+        g.gridx = 0;
+        g.gridy = 1;
+        g.insets = new Insets(0, 0, 10, 0);
+        g.anchor = GridBagConstraints.WEST;
+        
+        passwordLabel = new JLabel("Enter Password Length (8-20 characters):");
+        passwordLabel.setFont(passLenFont);
+        passwordLabel.setForeground(Color.WHITE);
+        g.fill = GridBagConstraints.HORIZONTAL;
+        g.gridwidth = GridBagConstraints.REMAINDER; // added this line
+        
+        tfPane.add(passwordLabel, g);
+        
+        tf.setBackground(coal);
+        tf.setBorder(null);
+        tf.setForeground(new Color(137, 145, 155));
+        tf.setFont(regularFont);
+        tf.setPreferredSize(new Dimension(120, 30));
+        g.gridy = 2;
+        g.insets = new Insets(0, 0, 0, 0);
+        g.fill = GridBagConstraints.HORIZONTAL;
+        g.anchor = GridBagConstraints.WEST;
+        g.gridwidth = GridBagConstraints.REMAINDER; // added this line
+        g.weightx = 1.0;
+        tfPane.add(tf,g);
+        tfPane.setOpaque(false);
+        
         // Button Configuration
         buttonPane = new JPanel(new FlowLayout());
         buttonPane.setOpaque(false);
@@ -120,20 +150,24 @@ public class PasswordGenerator extends JFrame {
         mainPane.add(title, gbc);
 
         gbc.gridy = 1;
-        gbc.weighty = 1.0;
         gbc.insets = new Insets(25, 45, 0, 45);
         gbc.fill = GridBagConstraints.BOTH;
         mainPane.add(checkBoxPane, gbc);
 
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(25, 45, 0, 45);
-        mainPane.add(buttonPane, gbc);
+        gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.insets = new Insets(15, 45, 0, 45);
+        mainPane.add(tfPane, gbc);
 
         gbc.gridy = 3;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(20, 45, 40, 45);
+        gbc.insets = new Insets(25, 45, 0, 45);
+        mainPane.add(buttonPane, gbc);
 
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(20, 45, 40, 45);
         mainPane.add(passwordPane, gbc);
 
         pack();
@@ -145,46 +179,41 @@ public class PasswordGenerator extends JFrame {
         String uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
         String numbers = "0123456789";
-        // String specialCharacters = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
         String specialCharacters = "!#$%&*=?@";
-
         String ambiguousCharacters = "{}[]()/\\\\'\"`~,^_\\-.:;<>,]";
-
         String similarCharacters = "il1Lo0O";
-
         StringBuilder passwordBuilder = new StringBuilder();
 
-        // Add uppercase letters
+        // Add Uppercase letters
         if (checkboxes[0].isSelected()) {
             passwordBuilder.append(uppercaseLetters);
         }
 
-        // Add lowercase letters
+        // Add Lowercase letters
         if (checkboxes[1].isSelected()) {
             passwordBuilder.append(lowercaseLetters);
         }
 
-        // Add numbers
+        // Add Numbers
         if (checkboxes[2].isSelected()) {
             passwordBuilder.append(numbers);
         }
 
-        // Add special characters
+        // Add Special Characters
         if (checkboxes[3].isSelected()) {
             passwordBuilder.append(specialCharacters);
         }
 
-        // Exclude similar characters
+        // Exclude Similar Characters
         if (checkboxes[4].isSelected()) {
             passwordBuilder = new StringBuilder(
                     passwordBuilder.toString().replaceAll("[" + similarCharacters + "]", ""));
         }
 
-        // Exclude ambiguous characters
+        // Exclude Ambiguous Characters
         if (checkboxes[5].isSelected()) {
             passwordBuilder = new StringBuilder(
                     passwordBuilder.toString().replaceAll("[" + ambiguousCharacters + "]", ""));
-
         }
 
         String passwordCharacterSet = passwordBuilder.toString();
@@ -246,16 +275,17 @@ public class PasswordGenerator extends JFrame {
         }
 
         StringBuilder password = new StringBuilder();
-        int passwordLength = 8; // default password length
-        try {
-            passwordLength = Integer.parseInt(JOptionPane.showInputDialog("Enter Password length (8 to 64):"));
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(null, "Invalid password length. Default length of 8 will be used.");
-        }
-        if (passwordLength < 8 || passwordLength > 64) {
-            JOptionPane.showMessageDialog(null, "Invalid password length. Default length of 8 will be used.");
+        int passwordLength = 8;
+        int tfLength = Integer.parseInt(tf.getText());
+
+        // Password Length Validation
+        if(tf.getText() != null && tfLength > 8 && tfLength <= 20){
+            passwordLength = Integer.parseInt(tf.getText());
+        }else{
             passwordLength = 8;
         }
+
+        // Generate Password
         for (int i = 0; i < passwordLength; i++) {
             int index = (int) (Math.random() * passwordCharacterSet.length());
             password.append(passwordCharacterSet.charAt(index));
