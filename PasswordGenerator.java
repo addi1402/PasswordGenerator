@@ -176,6 +176,7 @@ public class PasswordGenerator extends JFrame {
     }
 
     private String generatePassword() {
+        String defaultCharacterSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
         String uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
         String numbers = "0123456789";
@@ -272,6 +273,11 @@ public class PasswordGenerator extends JFrame {
             if (!containsSpecialCharacter) {
                 passwordCharacterSet += specialCharacters;
             }
+        }
+
+        // If no checkboxes are selected
+        if (passwordBuilder.length() == 0) {
+            passwordCharacterSet += defaultCharacterSet;
         }
 
         StringBuilder password = new StringBuilder();
