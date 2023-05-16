@@ -5,13 +5,18 @@ import javax.swing.*;
 
 public class PasswordGenerator extends JFrame {
 
-    private JLabel title = new JLabel("Password Generator");
-    private JButton generateButton;
-    private JLabel passwordLabel;
+    // Custom Colors
     private Color blue = new Color(48, 129, 237);
     private Color backgroundColor = new Color(22, 27, 34);
     private Color coal = new Color(27, 34, 43);
+
+    private JLabel title = new JLabel("Password Generator");
+    private JLabel passwordLabel;
+    
+    private JButton generateButton;
+
     private JPanel mainPane, checkBoxPane, buttonPane, passwordPane, tfPane;
+
     JCheckBox[] checkboxes = new JCheckBox[10];
     private JTextField tf = new JTextField(2);
 
@@ -170,12 +175,15 @@ public class PasswordGenerator extends JFrame {
         gbc.insets = new Insets(20, 45, 40, 45);
         mainPane.add(passwordPane, gbc);
 
+        // Frame Configuration
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
     private String generatePassword() {
+
+        // Character Sets
         String defaultCharacterSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
         String uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
@@ -287,17 +295,18 @@ public class PasswordGenerator extends JFrame {
         if (tf.getText().isEmpty()) {
             passwordLength = 8;
         } else {
-            String tfText = tf.getText().trim(); // Trim leading/trailing whitespaces
+            // Trim leading/trailing whitespaces
+            String tfText = tf.getText().trim(); 
             if (!tfText.isEmpty()) {
                 try {
-                    int tfLength = Integer.parseInt(tfText); // Declare and initialize tfLength
+                    int tfLength = Integer.parseInt(tfText);
                     if (tfLength > 8 && tfLength <= 20) {
                         passwordLength = tfLength;
                     } else {
                         passwordLength = 8;
                     }
                 } catch (NumberFormatException e) {
-                    // Handle invalid input (non-numeric characters)
+                    // Handle invalid input
                     passwordLength = 8;
                 }
             } else {
