@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.*;
 import javax.swing.*;
 
 public class PasswordGenerator extends JFrame {
@@ -12,12 +13,12 @@ public class PasswordGenerator extends JFrame {
 
     private JLabel title = new JLabel("Password Generator");
     private JLabel passwordLabel;
-    
+
     private JButton generateButton;
 
     private JPanel mainPane, checkBoxPane, buttonPane, passwordPane, tfPane;
 
-    JCheckBox[] checkboxes = new JCheckBox[10];
+    JCheckBox[] checkboxes = new JCheckBox[6];
     private JTextField tf = new JTextField(2);
 
     // Checkbox Configuration Method
@@ -47,36 +48,32 @@ public class PasswordGenerator extends JFrame {
         Font regular = null;
 
         try {
-            light = Font.createFont(Font.TRUETYPE_FONT, new File("Segoe UI Light.ttf"));
-            regular = Font.createFont(Font.TRUETYPE_FONT, new File("Segoe UI.ttf"));
+            light = Font.createFont(Font.TRUETYPE_FONT, new File("Fonts/Nunito-Regular.ttf"));
+            regular = Font.createFont(Font.TRUETYPE_FONT, new File("Fonts/Nunito-Medium.ttf"));
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
         }
 
         // Create a new Font Object
-        Font lightFont = light.deriveFont(Font.PLAIN, 28);
+        Font lightFont = light.deriveFont(Font.PLAIN, 20);
         Font regularFont = regular.deriveFont(Font.PLAIN, 14);
-        Font passFont = light.deriveFont(Font.PLAIN, 16);
-        Font passLenFont = light.deriveFont(Font.PLAIN, 16);
+        Font passFont = light.deriveFont(Font.PLAIN, 13);
+        Font passLenFont = light.deriveFont(Font.PLAIN, 14);
 
         // Title Configuration
         title.setFont(lightFont);
         title.setForeground(Color.WHITE);
 
         // Checkbox Configuration
-        checkBoxPane = new JPanel(new GridLayout(10, 1));
+        checkBoxPane = new JPanel(new GridLayout(6, 1));
         checkBoxPane.setOpaque(false);
 
         checkboxes[0] = new JCheckBox("Uppercase Letters");
         checkboxes[1] = new JCheckBox("Lowercase Letters");
         checkboxes[2] = new JCheckBox("Numbers");
         checkboxes[3] = new JCheckBox("Special Characters");
-        checkboxes[4] = new JCheckBox("At least One Uppercase Letter");
-        checkboxes[5] = new JCheckBox("At least One Lowercase Letter");
-        checkboxes[6] = new JCheckBox("At least One Number");
-        checkboxes[7] = new JCheckBox("At least One Special Character");
-        checkboxes[8] = new JCheckBox("Exclude Similar Characters");
-        checkboxes[9] = new JCheckBox("Exclude Ambiguous Characters");
+        checkboxes[4] = new JCheckBox("Exclude Similar Characters");
+        checkboxes[5] = new JCheckBox("Exclude Ambiguous Characters");
 
         checkBoxConfig(regularFont);
 
@@ -88,7 +85,7 @@ public class PasswordGenerator extends JFrame {
         g.insets = new Insets(0, 0, 10, 0);
         g.anchor = GridBagConstraints.WEST;
 
-        passwordLabel = new JLabel("Enter Password Length (8-20 characters):");
+        passwordLabel = new JLabel("Enter Password Length (Maximum 32 Characters):");
         passwordLabel.setFont(passLenFont);
         passwordLabel.setForeground(Color.WHITE);
         g.fill = GridBagConstraints.HORIZONTAL;
@@ -181,6 +178,22 @@ public class PasswordGenerator extends JFrame {
         setVisible(true);
     }
 
+    String extractedSet(String type) {
+        Random random = new Random();
+        int desiredLength = random.nextInt(type.length()) + 1;
+
+        // Extract the desired number of characters from the string
+        StringBuilder extractedCharacters = new StringBuilder();
+        for (int i = 0; i < desiredLength; i++) {
+            int randomIndex = random.nextInt(type.length());
+            extractedCharacters.append(type.charAt(randomIndex));
+        }
+
+        // Use the extracted characters for further processing
+        String extractedString = extractedCharacters.toString();
+        return extractedString;
+    }
+
     private String generatePassword() {
 
         // Character Sets
@@ -195,93 +208,44 @@ public class PasswordGenerator extends JFrame {
 
         // Add Uppercase letters
         if (checkboxes[0].isSelected()) {
-            passwordBuilder.append(uppercaseLetters);
+            passwordBuilder.append(extractedSet(uppercaseLetters));
+            passwordBuilder.append(defaultCharacterSet);
         }
 
         // Add Lowercase letters
         if (checkboxes[1].isSelected()) {
             passwordBuilder.append(lowercaseLetters);
+            passwordBuilder.append(defaultCharacterSet);
+
         }
 
         // Add Numbers
         if (checkboxes[2].isSelected()) {
             passwordBuilder.append(numbers);
+            passwordBuilder.append(defaultCharacterSet);
         }
 
         // Add Special Characters
         if (checkboxes[3].isSelected()) {
             passwordBuilder.append(specialCharacters);
+            passwordBuilder.append(defaultCharacterSet);
         }
 
         // Exclude Similar Characters
         if (checkboxes[4].isSelected()) {
             passwordBuilder = new StringBuilder(
                     passwordBuilder.toString().replaceAll("[" + similarCharacters + "]", ""));
+            passwordBuilder.append(defaultCharacterSet);
         }
 
         // Exclude Ambiguous Characters
         if (checkboxes[5].isSelected()) {
             passwordBuilder = new StringBuilder(
                     passwordBuilder.toString().replaceAll("[" + ambiguousCharacters + "]", ""));
+            passwordBuilder.append(defaultCharacterSet);
         }
 
         String passwordCharacterSet = passwordBuilder.toString();
-
-        // Check if at least one uppercase letter is required
-        if (checkboxes[6].isSelected()) {
-            boolean containsUppercaseLetter = false;
-            for (int i = 0; i < uppercaseLetters.length(); i++) {
-                if (passwordCharacterSet.indexOf(uppercaseLetters.charAt(i)) >= 0) {
-                    containsUppercaseLetter = true;
-                    break;
-                }
-            }
-            if (!containsUppercaseLetter) {
-                passwordCharacterSet += uppercaseLetters;
-            }
-        }
-
-        // Check if at least one lowercase letter is required
-        if (checkboxes[7].isSelected()) {
-            boolean containsLowercaseLetter = false;
-            for (int i = 0; i < lowercaseLetters.length(); i++) {
-                if (passwordCharacterSet.indexOf(lowercaseLetters.charAt(i)) >= 0) {
-                    containsLowercaseLetter = true;
-                    break;
-                }
-            }
-            if (!containsLowercaseLetter) {
-                passwordCharacterSet += lowercaseLetters;
-            }
-        }
-
-        // Check if at least one number is required
-        if (checkboxes[8].isSelected()) {
-            boolean containsNumber = false;
-            for (int i = 0; i < numbers.length(); i++) {
-                if (passwordCharacterSet.indexOf(numbers.charAt(i)) >= 0) {
-                    containsNumber = true;
-                    break;
-                }
-            }
-            if (!containsNumber) {
-                passwordCharacterSet += numbers;
-            }
-        }
-
-        // Check if at least one special character is required
-        if (checkboxes[9].isSelected()) {
-            boolean containsSpecialCharacter = false;
-            for (int i = 0; i < specialCharacters.length(); i++) {
-                if (passwordCharacterSet.indexOf(specialCharacters.charAt(i)) >= 0) {
-                    containsSpecialCharacter = true;
-                    break;
-                }
-            }
-            if (!containsSpecialCharacter) {
-                passwordCharacterSet += specialCharacters;
-            }
-        }
 
         // If no checkboxes are selected
         if (passwordBuilder.length() == 0) {
@@ -293,17 +257,20 @@ public class PasswordGenerator extends JFrame {
 
         // Password Length Validation
         if (tf.getText().isEmpty()) {
-            passwordLength = 8;
+            passwordLength = (int) (8 + (Math.random() * 32));
+            ;
         } else {
             // Trim leading/trailing whitespaces
-            String tfText = tf.getText().trim(); 
+            String tfText = tf.getText().trim();
             if (!tfText.isEmpty()) {
                 try {
                     int tfLength = Integer.parseInt(tfText);
-                    if (tfLength > 8 && tfLength <= 20) {
+                    if (tfLength >= 8 && tfLength <= 32) {
                         passwordLength = tfLength;
-                    } else {
+                    } else if (tfLength < 8) {
                         passwordLength = 8;
+                    } else {
+                        passwordLength = 32;
                     }
                 } catch (NumberFormatException e) {
                     // Handle invalid input
