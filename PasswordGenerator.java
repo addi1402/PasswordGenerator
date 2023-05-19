@@ -214,14 +214,14 @@ public class PasswordGenerator extends JFrame {
 
         // Add Lowercase letters
         if (checkboxes[1].isSelected()) {
-            passwordBuilder.append(lowercaseLetters);
+            passwordBuilder.append(extractedSet(lowercaseLetters));
             passwordBuilder.append(defaultCharacterSet);
 
         }
 
         // Add Numbers
         if (checkboxes[2].isSelected()) {
-            passwordBuilder.append(numbers);
+            passwordBuilder.append(extractedSet(numbers));
             passwordBuilder.append(defaultCharacterSet);
         }
 
